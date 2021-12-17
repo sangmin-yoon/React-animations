@@ -6,50 +6,76 @@ const Wrapper = styled(motion.div)`
   height: 100vh;
   width: 100vw;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  flex-direction: column;
 `;
 
 const Grid = styled.div`
   display: grid;
-  width: 50vw;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  grid-template-columns: repeat(3, 1fr);
-  div:first-child,
-  div:last-child {
-    grid-column: span 2;
-  }
+  margin-bottom: 50px;
 `;
+
+const Box = styled(motion.div)`
+  background-color: rgba(255, 255, 255, 0.5);
+  height: 200px;
+  width: 400px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Circle = styled(motion.div)`
+  height: 100px;
+  width: 100px;
+  border-radius: 50px;
+  background-color: white;
+`;
+
+const Switch = styled(motion.button)`
+  color: rgb(20, 192, 135);
+`;
+
+const switchVariants: Variants = {
+  click: { scale: 1.5, color: "rgb(43, 0, 255)" },
+};
 
 const Overlay = styled(motion.div)`
   width: 100%;
   height: 100%;
-
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const Box = styled(motion.div)`
-  height: 200px;
-  background-color: rgba(255, 255, 255, 1);
-  border-radius: 40px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 28px;
-`;
-
 function App() {
+  const [circleC, SetCircleC] = useState(false);
+  const circleClicked = () => SetCircleC((prev) => !prev);
   const [id, setId] = useState<null | string>(null);
+
   return (
     <Wrapper>
       <Grid>
-        {["1", "2", "3", "4"].map((n) => (
-          <Box onClick={() => setId(n)} key={n} layoutId={n} />
-        ))}
+        <Box
+          whileHover={{
+            boxShadow: "-30px -30px 0px 30px  rgba(255, 255, 255, 0.498)",
+          }}
+          onClick={() => setId("1")}
+          layoutId="1"
+        />
+        <Box>{!circleC ? <Circle layoutId="circle" /> : null}</Box>
+        <Box>{circleC ? <Circle layoutId="circle" /> : null}</Box>
+        <Box
+          whileHover={{
+            boxShadow: "30px 30px 0px 30px  rgba(255, 255, 255, 0.498)",
+          }}
+          onClick={() => setId("2")}
+          layoutId="2"
+        />
       </Grid>
       <AnimatePresence>
         {id ? (
@@ -59,10 +85,24 @@ function App() {
             animate={{ backgroundColor: "rgba(0, 0, 0,0.5)" }}
             exit={{ backgroundColor: "rgba(0, 0, 0, 0.0)" }}
           >
-            <Box layoutId={id} style={{ width: "400px", height: "200px" }} />
+            <Box
+              layoutId={id}
+              style={{
+                width: "600px",
+                height: "300px",
+                backgroundColor: "white",
+              }}
+            />
           </Overlay>
         ) : null}
       </AnimatePresence>
+      <Switch
+        variants={switchVariants}
+        whileTap="click"
+        onClick={circleClicked}
+      >
+        Switch
+      </Switch>
     </Wrapper>
   );
 }
